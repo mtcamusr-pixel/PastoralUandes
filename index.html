@@ -21,7 +21,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* NAV */
         nav {
             background: var(--surface); border-bottom: 1px solid var(--border);
             padding: 0 1.5rem; height: 56px;
@@ -39,9 +38,7 @@
         .view { display: none; }
         .view.active { display: block; }
 
-        /* ── HOME ── */
         .home-wrapper { max-width: 1000px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
-
         .home-header { margin-bottom: 2rem; }
         .home-header h1 {
             font-family: 'Fraunces', serif; font-weight: 900;
@@ -69,14 +66,10 @@
             position: relative; overflow: hidden;
             display: flex; align-items: flex-end; padding: 1rem 1.25rem;
         }
-        .card-banner img {
-            position: absolute; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; transition: transform 0.4s ease;
-        }
-        .project-card:hover .card-banner img { transform: scale(1.04); }
-        .card-banner-overlay {
+        .card-banner::before {
+            content: '';
             position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
+            background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.04) 20px, rgba(255,255,255,0.04) 21px);
         }
         .card-banner.red-bg { background: var(--red); }
         .card-banner.blue-bg { background: var(--blue); }
@@ -108,7 +101,6 @@
         .btn-primary.red { background: var(--red); }
         .btn-primary.blue { background: var(--blue); }
 
-        /* ── FORM ── */
         .form-wrapper { max-width: 680px; margin: 0 auto; padding: 1.5rem 1.25rem 6rem; }
 
         .form-hero {
@@ -118,12 +110,10 @@
             display: flex; flex-direction: column; justify-content: flex-end;
             padding: clamp(1.25rem, 4vw, 2.5rem);
         }
-        .form-hero img {
-            position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-        }
-        .form-hero-overlay {
+        .form-hero::before {
+            content: '';
             position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.28) 100%);
+            background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.04) 20px, rgba(255,255,255,0.04) 21px);
         }
         .form-hero.red-bg { background: var(--red); }
         .form-hero.blue-bg { background: var(--blue); }
@@ -173,7 +163,6 @@
         .form-input::placeholder { color: var(--text-light); }
         textarea.form-input { resize: vertical; min-height: 85px; }
 
-        /* Zonas — 2 columnas en desktop, 1 en móvil */
         .zone-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -203,7 +192,6 @@
         .zone-check svg { display: none; }
         .zone-option.selected .zone-check svg { display: block; }
 
-        /* Botones — sticky en móvil, normal en desktop */
         .form-actions {
             display: flex; gap: 1rem;
             margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
@@ -235,14 +223,12 @@
         .btn-confirm.blue { background: var(--blue); }
         .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* Modal éxito — centrado en desktop, slide-up en móvil */
         .success-overlay {
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.45); z-index: 200;
             align-items: center; justify-content: center;
         }
         .success-overlay.show { display: flex; }
-
         .success-card {
             background: white; border-radius: var(--radius-lg);
             padding: 2.5rem 2rem; text-align: center;
@@ -263,9 +249,7 @@
             width: 60px; height: 60px; background: #DCFCE7; border-radius: 50%;
             display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
         }
-        .success-card h3 {
-            font-family: 'Fraunces', serif; font-size: 1.35rem; font-weight: 700; margin-bottom: 0.4rem;
-        }
+        .success-card h3 { font-family: 'Fraunces', serif; font-size: 1.35rem; font-weight: 700; margin-bottom: 0.4rem; }
         .success-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; }
 
         footer {
@@ -295,7 +279,6 @@
 
                 <div class="project-card" onclick="showForm('Forjadores','red')">
                     <div class="card-banner red-bg">
-                        <div class="card-banner-overlay"></div>
                         <span class="card-tag">Forjadores</span>
                     </div>
                     <div class="card-body">
@@ -307,7 +290,6 @@
 
                 <div class="project-card" onclick="showForm('Fronteras','blue')">
                     <div class="card-banner blue-bg">
-                        <div class="card-banner-overlay"></div>
                         <span class="card-tag">Fronteras</span>
                     </div>
                     <div class="card-body">
@@ -331,7 +313,6 @@
         <div class="form-wrapper">
 
             <div id="form-hero" class="form-hero red-bg">
-                <div class="form-hero-overlay"></div>
                 <div class="form-hero-content">
                     <h2 id="hero-title">Forjadores: Proyecto de Invierno</h2>
                     <p>Formulario de Inscripción Oficial</p>
@@ -447,14 +428,6 @@
 
             document.getElementById('form-hero').className = 'form-hero ' + (color === 'red' ? 'red-bg' : 'blue-bg');
             document.getElementById('hero-title').textContent = project + ': Proyecto de Invierno';
-
-            const imgF = document.getElementById('img-hero-forjadores');
-            const imgFr = document.getElementById('img-hero-fronteras');
-            if (project === 'Forjadores') {
-                imgF.style.display = 'block'; imgFr.style.display = 'none';
-            } else {
-                imgFr.style.display = 'block'; imgF.style.display = 'none';
-            }
 
             const zoneTitle = document.getElementById('zone-section-title');
             zoneTitle.className = 'form-section-title ' + color;
