@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastoral UAndes — Proyectos de Invierno 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --red: #C0291A; --red-light: #F9ECE9; --red-dark: #8C1A0E;
+            --blue: #1A3A6B; --blue-light: #EAF0FA; --blue-dark: #0F2547;
+            --text: #1a1a1a; --text-muted: #6b6b6b; --text-light: #9a9a9a;
+            --bg: #F7F5F0; --surface: #FFFFFF;
+            --border: #E2DDD8; --border-strong: #BFBAB5;
+            --radius-lg: 20px;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* NAV */
+        nav {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 0 1.5rem; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-logo { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 700; }
+        .back-link {
+            font-size: 0.875rem; color: var(--text-muted); background: none; border: none;
+            cursor: pointer; display: none; align-items: center; gap: 6px;
+            font-family: 'DM Sans', sans-serif; transition: color 0.15s;
+        }
+        .back-link:hover { color: var(--text); }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* ── HOME ── */
+        .home-wrapper { max-width: 1000px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+
+        .home-header { margin-bottom: 2rem; }
+        .home-header h1 {
+            font-family: 'Fraunces', serif; font-weight: 900;
+            letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 0.5rem;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+        }
+        .home-header p { font-size: clamp(0.85rem, 2vw, 1rem); color: var(--text-muted); }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .project-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            border: 1px solid var(--border); overflow: hidden;
+            transition: box-shadow 0.2s, transform 0.2s; cursor: pointer;
+        }
+        .project-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.1); transform: translateY(-3px); }
+        .project-card:active { transform: scale(0.99); opacity: 0.95; }
+
+        .card-banner {
+            height: clamp(140px, 22vw, 200px);
+            position: relative; overflow: hidden;
+            display: flex; align-items: flex-end; padding: 1rem 1.25rem;
+        }
+        .card-banner img {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; transition: transform 0.4s ease;
+        }
+        .project-card:hover .card-banner img { transform: scale(1.04); }
+        .card-banner-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
+        }
+        .card-banner.red-bg { background: var(--red); }
+        .card-banner.blue-bg { background: var(--blue); }
+        .card-tag {
+            position: relative; z-index: 1;
+            font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+            color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.18);
+            padding: 3px 10px; border-radius: 20px;
+        }
+
+        .card-body { padding: 1.25rem; }
+        .card-body h3 {
+            font-family: 'Fraunces', serif; font-weight: 700;
+            margin-bottom: 0.4rem; letter-spacing: -0.02em;
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+        }
+        .card-body p {
+            font-size: clamp(0.82rem, 1.8vw, 0.9rem);
+            color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;
+        }
+
+        .btn-primary {
+            width: 100%; padding: 0.85rem; border: none; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+            color: white; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn-primary:hover { opacity: 0.88; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary.red { background: var(--red); }
+        .btn-primary.blue { background: var(--blue); }
+
+        /* ── FORM ── */
+        .form-wrapper { max-width: 680px; margin: 0 auto; padding: 1.5rem 1.25rem 6rem; }
+
+        .form-hero {
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            color: white; position: relative; overflow: hidden;
+            min-height: clamp(110px, 20vw, 160px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: clamp(1.25rem, 4vw, 2.5rem);
+        }
+        .form-hero img {
+            position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+        }
+        .form-hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.28) 100%);
+        }
+        .form-hero.red-bg { background: var(--red); }
+        .form-hero.blue-bg { background: var(--blue); }
+        .form-hero-content { position: relative; z-index: 1; }
+        .form-hero h2 {
+            font-family: 'Fraunces', serif; font-weight: 900;
+            letter-spacing: -0.03em; margin-bottom: 0.2rem;
+            font-size: clamp(1.4rem, 4vw, 2rem);
+        }
+        .form-hero p { font-size: 0.85rem; opacity: 0.85; }
+
+        .form-body {
+            background: var(--surface);
+            padding: clamp(1.25rem, 4vw, 2rem) clamp(1.25rem, 4vw, 2.5rem);
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            border: 1px solid var(--border); border-top: none;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem; margin-bottom: 1rem;
+        }
+
+        .form-section { margin-bottom: 1.5rem; }
+        .form-section-title {
+            font-size: 0.9rem; font-weight: 600; color: var(--text);
+            margin-bottom: 0.85rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--border);
+        }
+        .form-section-title.red { color: var(--red); border-color: var(--red-light); }
+        .form-section-title.blue { color: var(--blue); border-color: var(--blue-light); }
+
+        .form-group { margin-bottom: 0.9rem; }
+        .form-label {
+            display: block; font-size: 0.68rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-muted); margin-bottom: 5px;
+        }
+        .form-input {
+            width: 100%; padding: 0.7rem 0.85rem;
+            background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+            font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--text);
+            outline: none; -webkit-appearance: none;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .form-input:focus { border-color: var(--border-strong); background: white; }
+        .form-input::placeholder { color: var(--text-light); }
+        textarea.form-input { resize: vertical; min-height: 85px; }
+
+        /* Zonas — 2 columnas en desktop, 1 en móvil */
+        .zone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        .zone-option {
+            border: 2px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem;
+            cursor: pointer; transition: all 0.15s; background: white;
+            display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+        }
+        .zone-option:hover { border-color: var(--border-strong); }
+        .zone-option:active { opacity: 0.85; }
+        .zone-option.selected.red { border-color: var(--red); background: var(--red-light); }
+        .zone-option.selected.blue { border-color: var(--blue); background: var(--blue-light); }
+        .zone-info { flex: 1; }
+        .zone-name { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+        .zone-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.4; }
+        .zone-option.selected.red .zone-name { color: var(--red-dark); }
+        .zone-option.selected.blue .zone-name { color: var(--blue-dark); }
+        .zone-check {
+            width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .zone-option.selected.red .zone-check { background: var(--red); border-color: var(--red); }
+        .zone-option.selected.blue .zone-check { background: var(--blue); border-color: var(--blue); }
+        .zone-check svg { display: none; }
+        .zone-option.selected .zone-check svg { display: block; }
+
+        /* Botones — sticky en móvil, normal en desktop */
+        .form-actions {
+            display: flex; gap: 1rem;
+            margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+        }
+        @media (max-width: 600px) {
+            .form-actions {
+                position: fixed; bottom: 0; left: 0; right: 0;
+                background: var(--surface); border-top: 1px solid var(--border);
+                padding: 0.85rem 1.25rem; margin: 0; z-index: 50;
+            }
+        }
+
+        .btn-secondary {
+            flex: 1; padding: 0.85rem; background: transparent;
+            border: 1.5px solid var(--border-strong); border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+            color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+        }
+        .btn-secondary:hover { background: var(--bg); color: var(--text); }
+
+        .btn-confirm {
+            flex: 2; padding: 0.85rem; border: none; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+            color: white; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn-confirm:hover { opacity: 0.88; }
+        .btn-confirm:active { transform: scale(0.98); }
+        .btn-confirm.red { background: var(--red); }
+        .btn-confirm.blue { background: var(--blue); }
+        .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Modal éxito — centrado en desktop, slide-up en móvil */
+        .success-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.45); z-index: 200;
+            align-items: center; justify-content: center;
+        }
+        .success-overlay.show { display: flex; }
+
+        .success-card {
+            background: white; border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem; text-align: center;
+            max-width: 360px; width: 90%; animation: pop 0.3s ease;
+        }
+        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        @media (max-width: 600px) {
+            .success-overlay { align-items: flex-end; }
+            .success-card {
+                max-width: 100%; width: 100%; border-radius: 20px 20px 0 0;
+                padding: 2rem 1.5rem 2.5rem; animation: slideup 0.3s ease;
+            }
+            @keyframes slideup { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        }
+
+        .success-icon {
+            width: 60px; height: 60px; background: #DCFCE7; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
+        }
+        .success-card h3 {
+            font-family: 'Fraunces', serif; font-size: 1.35rem; font-weight: 700; margin-bottom: 0.4rem;
+        }
+        .success-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; }
+
+        footer {
+            border-top: 1px solid var(--border); padding: 1.25rem 1.5rem;
+            text-align: center; font-size: 0.76rem; color: var(--text-light);
+            background: var(--surface); margin-top: 3rem;
+        }
+        footer a { color: var(--text-muted); text-decoration: none; margin: 0 0.6rem; }
+        footer a:hover { color: var(--text); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-logo">Pastoral UAndes</div>
+        <button id="back-btn" class="back-link" onclick="showHome()">← Volver a Proyectos</button>
+    </nav>
+
+    <!-- HOME -->
+    <div id="view-home" class="view active">
+        <div class="home-wrapper">
+            <header class="home-header">
+                <h1>Selección de Proyectos<br>de Invierno 2026</h1>
+                <p>Elige el proyecto en el que deseas participar este invierno.</p>
+            </header>
+            <div class="projects-grid">
+
+                <div class="project-card" onclick="showForm('Forjadores','red')">
+                    <div class="card-banner red-bg">
+                        <img src="https://drive.google.com/uc?export=view&id=1sRX0V4ldF4J7a0GRm6rnrDO5bH3IPelm" alt="Forjadores" onerror="this.style.display='none'">
+                        <div class="card-banner-overlay"></div>
+                        <span class="card-tag">Forjadores</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>Forjadores</h3>
+                        <p>Construcción y misiones. Únete a una comunidad de servicio que busca impactar a través de la acción concreta.</p>
+                        <button class="btn-primary red" onclick="event.stopPropagation(); showForm('Forjadores','red')">Inscribirse en Forjadores →</button>
+                    </div>
+                </div>
+
+                <div class="project-card" onclick="showForm('Fronteras','blue')">
+                    <div class="card-banner blue-bg">
+                        <img src="https://drive.google.com/uc?export=view&id=1Ea_v6dnHqNYJDUr8gcOi6qMWob__OqL_" alt="Fronteras" onerror="this.style.display='none'">
+                        <div class="card-banner-overlay"></div>
+                        <span class="card-tag">Fronteras</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>Fronteras</h3>
+                        <p>Misiones en zonas aisladas. Una experiencia profunda de encuentro en los rincones más alejados.</p>
+                        <button class="btn-primary blue" onclick="event.stopPropagation(); showForm('Fronteras','blue')">Inscribirse en Fronteras →</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <footer>
+            © 2024 Universidad de Los Andes · Pastoral Universitaria
+            <br style="margin-top:5px;">
+            <a href="#">Contacto</a><a href="#">Términos</a><a href="#">Privacidad</a>
+        </footer>
+    </div>
+
+    <!-- FORM -->
+    <div id="view-form" class="view">
+        <div class="form-wrapper">
+
+            <div id="form-hero" class="form-hero red-bg">
+                <img id="img-hero-forjadores" src="https://drive.google.com/uc?export=view&id=1sRX0V4ldF4J7a0GRm6rnrDO5bH3IPelm" alt="" onerror="this.style.display='none'">
+                <img id="img-hero-fronteras"  src="https://drive.google.com/uc?export=view&id=1Ea_v6dnHqNYJDUr8gcOi6qMWob__OqL_" alt="" onerror="this.style.display='none'" style="display:none;">
+                <div class="form-hero-overlay"></div>
+                <div class="form-hero-content">
+                    <h2 id="hero-title">Forjadores: Proyecto de Invierno</h2>
+                    <p>Formulario de Inscripción Oficial</p>
+                </div>
+            </div>
+
+            <div class="form-body">
+                <form id="inscription-form" onsubmit="submitForm(event)">
+
+                    <div class="form-section">
+                        <div class="form-section-title">Información Personal</div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Nombre Completo</label>
+                                <input type="text" id="input-name" class="form-input" placeholder="Nombre Apellido" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ID Estudiante / RUT</label>
+                                <input type="text" id="input-id" class="form-input" placeholder="12.345.678-9" required inputmode="numeric">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Carrera</label>
+                            <input type="text" id="input-career" class="form-input" placeholder="Ej: Ingeniería Civil Industrial" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title red" id="zone-section-title">Preferencia de Actividad</div>
+
+                        <div id="forjadores-options" class="zone-grid">
+                            <div class="zone-option" data-value="Misiones" onclick="selectZone(this)">
+                                <div class="zone-info">
+                                    <div class="zone-name">Misiones</div>
+                                    <div class="zone-desc">Evangelización y acompañamiento espiritual en comunidades rurales.</div>
+                                </div>
+                                <div class="zone-check"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                            </div>
+                            <div class="zone-option" data-value="Trabajos" onclick="selectZone(this)">
+                                <div class="zone-info">
+                                    <div class="zone-name">Trabajos</div>
+                                    <div class="zone-desc">Construcción y reparación de espacios comunitarios.</div>
+                                </div>
+                                <div class="zone-check"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                            </div>
+                        </div>
+
+                        <div id="fronteras-options" class="zone-grid" style="display:none;">
+                            <div class="zone-option" data-value="Zona Arica" onclick="selectZone(this)">
+                                <div class="zone-info"><div class="zone-name">Zona Arica</div><div class="zone-desc">Misiones en el extremo norte.</div></div>
+                                <div class="zone-check"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                            </div>
+                            <div class="zone-option" data-value="Zona Araucanía" onclick="selectZone(this)">
+                                <div class="zone-info"><div class="zone-name">Zona Araucanía</div><div class="zone-desc">Trabajo comunitario en el sur.</div></div>
+                                <div class="zone-check"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                            </div>
+                            <div class="zone-option" data-value="Zona Valparaíso" onclick="selectZone(this)">
+                                <div class="zone-info"><div class="zone-name">Zona Valparaíso</div><div class="zone-desc">Intervención en cerros y caletas.</div></div>
+                                <div class="zone-check"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                            </div>
+                            <div class="zone-option" data-value="Zona Biobío" onclick="selectZone(this)">
+                                <div class="zone-info"><div class="zone-name">Zona Biobío</div><div class="zone-desc">Apoyo en zonas rurales.</div></div>
+                                <div class="zone-check"><svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Comentarios Adicionales</div>
+                        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.65rem;">Indica si quieres ir con un amigo en particular o tienes alguna otra observación.</p>
+                        <textarea id="input-comments" class="form-input" placeholder="Ej: Me gustaría ir en el mismo grupo que Felipe Soto..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="showHome()">Cancelar</button>
+                        <button type="submit" class="btn-confirm red" id="confirm-btn">Confirmar Inscripción</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal éxito -->
+    <div class="success-overlay" id="success-modal">
+        <div class="success-card">
+            <div class="success-icon">
+                <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <h3>¡Inscripción Confirmada!</h3>
+            <p>Tu inscripción en <strong id="success-project"></strong> fue registrada exitosamente.</p>
+            <button class="btn-primary red" id="success-btn" onclick="closeSuccess()">Volver al Inicio</button>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ REEMPLAZA CON TU URL DE GOOGLE APPS SCRIPT
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNXFiGCzn5ZDXErdmEFeBCoK2DXfO593qj9Vfem4OB3-i-6aIfk7nqbQQN41yelXEB/exec';
+
+        let currentColor = 'red', currentProject = '', selectedZone = '';
+
+        function showHome() {
+            document.getElementById('view-home').classList.add('active');
+            document.getElementById('view-form').classList.remove('active');
+            document.getElementById('back-btn').style.display = 'none';
+            selectedZone = '';
+        }
+
+        function showForm(project, color) {
+            currentProject = project; currentColor = color; selectedZone = '';
+
+            document.getElementById('form-hero').className = 'form-hero ' + (color === 'red' ? 'red-bg' : 'blue-bg');
+            document.getElementById('hero-title').textContent = project + ': Proyecto de Invierno';
+
+            const imgF = document.getElementById('img-hero-forjadores');
+            const imgFr = document.getElementById('img-hero-fronteras');
+            if (project === 'Forjadores') {
+                imgF.style.display = 'block'; imgFr.style.display = 'none';
+            } else {
+                imgFr.style.display = 'block'; imgF.style.display = 'none';
+            }
+
+            const zoneTitle = document.getElementById('zone-section-title');
+            zoneTitle.className = 'form-section-title ' + color;
+            zoneTitle.textContent = project === 'Forjadores' ? 'Preferencia de Actividad' : 'Selecciona tu Zona';
+
+            document.getElementById('confirm-btn').className = 'btn-confirm ' + color;
+            document.getElementById('forjadores-options').style.display = project === 'Forjadores' ? 'grid' : 'none';
+            document.getElementById('fronteras-options').style.display  = project === 'Fronteras'  ? 'grid' : 'none';
+            document.querySelectorAll('.zone-option').forEach(o => o.classList.remove('selected','red','blue'));
+            ['input-name','input-id','input-career','input-comments'].forEach(id => document.getElementById(id).value = '');
+
+            document.getElementById('view-home').classList.remove('active');
+            document.getElementById('view-form').classList.add('active');
+            document.getElementById('back-btn').style.display = 'flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectZone(el) {
+            el.parentElement.querySelectorAll('.zone-option').forEach(o => o.classList.remove('selected','red','blue'));
+            el.classList.add('selected', currentColor);
+            selectedZone = el.getAttribute('data-value');
+        }
+
+        async function submitForm(e) {
+            e.preventDefault();
+            if (!selectedZone) { alert('Por favor selecciona una zona o actividad.'); return; }
+            const btn = document.getElementById('confirm-btn');
+            btn.textContent = 'Procesando...'; btn.disabled = true;
+            const payload = {
+                proyecto:         currentProject,
+                nombreCompleto:   document.getElementById('input-name').value.trim(),
+                idEstudiante:     document.getElementById('input-id').value.trim(),
+                carrera:          document.getElementById('input-career').value.trim(),
+                zonaSeleccionada: selectedZone,
+                comentarios:      document.getElementById('input-comments').value.trim()
+            };
+            try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); } catch(e) {}
+            btn.textContent = 'Confirmar Inscripción'; btn.disabled = false;
+            document.getElementById('success-project').textContent = currentProject;
+            document.getElementById('success-btn').className = 'btn-primary ' + currentColor;
+            document.getElementById('success-modal').classList.add('show');
+        }
+
+        function closeSuccess() {
+            document.getElementById('success-modal').classList.remove('show');
+            showHome();
+        }
+    </script>
+</body>
+</html>
